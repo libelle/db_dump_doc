@@ -25,6 +25,8 @@ DOCKER_INSTS=("/home/samuelg/project/get-rich-quick/docker" "/home/samuelg/proje
 MAX_MYSQL_WAIT_CYCLES=5
 # Where do mysql, mysqladmin, and mysqldump binaries live?
 MYSQL_PATH="/opt/local/bin"
+# Docker Path... where do the dockers park?
+DOCKET_PATH="/usr/local/bin"
 
 #
 # OK, you can stop reading at this point unless you wanna feel queasy (queasier?)
@@ -41,16 +43,16 @@ echo "Running DB backups $(date +%Y-%m-%d)"
 echo "Shutting down docker instances in prep for backups"
 for i in "${DOCKER_INSTS[@]}"; do
   cd "$i"
-  docker-compose down
+  $DOCKER_PATH/docker-compose down
 done
 # iterate through
 for i in "${DOCKER_INSTS[@]}"; do
   cd "$i"
   echo "Building docker instance in ${i}"
-  docker-compose build > /dev/null 2>&1
+  $DOCKER_PATH/docker-compose build > /dev/null 2>&1
   if [ $? -ne 0 ]; then { echo "Compose build failed, aborting." ; exit 1; } fi
   echo "Bringing up docker instance"
-  docker-compose up -d > /dev/null 2>&1
+  $DOCKER_PATH/docker-compose up -d > /dev/null 2>&1
   if [ $? -ne 0 ]; then { echo "Compose up failed, aborting." ; exit 1; } fi
   echo "Waiting 2 seconds..."
   sleep 2
@@ -80,5 +82,5 @@ for i in "${DOCKER_INSTS[@]}"; do
     $MYSQL_PATH/mysqldump --user=$DB_USER -h $HOSTNAME --protocol tcp --password=$DB_PASSWD --events --opt --single-transaction $db | gzip >"$DB_BACKUP/mysqldump-$HOSTNAME-$db-$(date +%Y-%m-%d).gz"
   done
   echo "Shutting down docker instance"
-  docker-compose down
+  $DOCKER_PATH/docker-compose down
 done
