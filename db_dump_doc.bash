@@ -32,6 +32,9 @@ DOCKER_PATH="/usr/local/bin"
 # OK, you can stop reading at this point unless you wanna feel queasy (queasier?)
 #
 
+# some setups require this...
+export PATH="$PATH:$MYSQL_PATH:$DOCKER_PATH"
+
 is_mysql_alive() {
   $MYSQL_PATH/mysqladmin ping --user=$DB_USER -h $HOSTNAME --protocol tcp --password=$DB_PASSWD > /dev/null 2>&1
   returned_value=$?
@@ -39,7 +42,7 @@ is_mysql_alive() {
 }
 
 DB_BACKUP="$DB_BACKUPDIR/$(date +%Y-%m-%d)"
-echo "Running DB backups $(date +%Y-%m-%d)"
+echo "Running DB backups $(date +%Y-%m-%d\ %H:%M)"
 echo "Shutting down docker instances in prep for backups"
 for i in "${DOCKER_INSTS[@]}"; do
   cd "$i"
@@ -84,3 +87,4 @@ for i in "${DOCKER_INSTS[@]}"; do
   echo "Shutting down docker instance"
   $DOCKER_PATH/docker-compose down
 done
+echo "Backups complete at $(date +%Y-%m-%d\ %H:%M)"
