@@ -26,7 +26,7 @@ MAX_MYSQL_WAIT_CYCLES=5
 # Where do mysql, mysqladmin, and mysqldump binaries live?
 MYSQL_PATH="/opt/local/bin"
 # Docker Path... where do the dockers park?
-DOCKET_PATH="/usr/local/bin"
+DOCKER_PATH="/usr/local/bin"
 
 #
 # OK, you can stop reading at this point unless you wanna feel queasy (queasier?)
